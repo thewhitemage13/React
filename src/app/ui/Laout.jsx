@@ -4,7 +4,7 @@ import { useContext, useRef } from "react";
 import AppContext from "../../feauters/context/AppContext";
 
 export default function Layout() {
-    const {user, setUser} = useContext(AppContext);
+    const {user, setUser, count} = useContext(AppContext);
     const closeModalRef = useRef();
 
     const authenticate = () => {
@@ -17,6 +17,7 @@ export default function Layout() {
 
     return <>
         <header>
+            
             <nav className="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
                 <div className="container-fluid">
                     <a className="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ASP_P26</a>
@@ -35,7 +36,10 @@ export default function Layout() {
                                 <Link className="nav-link text-dark" to="/about">About</Link>
                             </li>
                         </ul>
+                            <h3 className="header-h3">Пидсумок:{count}</h3>
+
                         <div>
+                            
                             {!!user && <>
                                  <button type="button" className="btn btn-outline-secondary" 
                                  onClick={() => setUser(null)}>
@@ -49,6 +53,7 @@ export default function Layout() {
                                 <i className="bi bi-box-arrow-in-right"></i>
                             </button>
                             </>}
+                            
                         </div>
                     </div>
                 </div>

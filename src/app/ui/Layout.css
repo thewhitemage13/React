@@ -5,3 +5,9 @@ main {
 footer {
     padding: .75em 0;
 }
+
+.header-h3 {
+  margin: 0;
+  margin-right: 30px;
+  font-size: 1rem;
+}

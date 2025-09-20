@@ -1,10 +1,9 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import AppContext from "../../feauters/context/AppContext";
 import Calc from "../../widgets/calc/Calc";
 
 export default function Home() {
-    const {user} = useContext(AppContext);
-    const [count, setCount] = useState(0);
+    const {user, count, setCount} = useContext(AppContext);
 
     const onCountClick = () => {
         setCount(count + 1);
@@ -36,6 +35,7 @@ export default function Home() {
                 <Calc />
 
             </div>
+
         </div>
     </div>;
 }
