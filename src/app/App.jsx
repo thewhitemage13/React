@@ -4,25 +4,24 @@ import Home from '../pages/home/Home';
 import Layout from './ui/laout';
 import Privacy from '../pages/privacy/Privacy';
 import About from '../pages/about/About';
+import AppContext from '../feauters/context/AppContext';
+import { useState } from 'react';
 
 
 function App() {
-  return <BrowserRouter>
-
-    <Routes>
-      <Route path="/" element={<Layout />}>
-
-        <Route index element={<Home />} />
-
-        <Route path="privacy" element={<Privacy />} />
-
-        <Route path="about" element={<About />} />
-
-      
-      </Route>
-    </Routes>
-
-  </BrowserRouter>;
+  const[user, setUser] = useState(null);
+  
+  return <AppContext.Provider value={{ message: "Hello From App", user, setUser }}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Home />} />
+            <Route path="privacy" element={<Privacy />} />
+            <Route path="about" element={<About />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AppContext.Provider>
 }
 
-export default App
+export default App; 
