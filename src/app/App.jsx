@@ -1,12 +1,13 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './ui/App.css'
 import Home from '../pages/home/Home';
-import Layout from './ui/laout';
 import Privacy from '../pages/privacy/Privacy';
 import About from '../pages/about/About';
 import AppContext from '../feauters/context/AppContext';
 import { useEffect, useState } from 'react';
 import Base64 from '../shared/base64/Base64';
+import Intro from '../pages/intro/Intro';
+import Layout from './ui/layout/Laout';
 
 
 function App() {
@@ -27,7 +28,9 @@ function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="privacy" element={<Privacy />} />
+            <Route path="intro" element={<Intro />} />
             <Route path="about" element={<About />} />
+
           </Route>
         </Routes>
       </BrowserRouter>
