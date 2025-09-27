@@ -189,7 +189,7 @@ export default function Calc() {
     [
       { face: "%",  type: "func",  action: onPercent },
       { face: "CE", type: "func",  action: onCE },
-      { face: "C",  type: "func",  action: _ => clearAll() },
+      { face: "C",  type: "func",  action: () => clearAll() },
       { face: "⌫",  type: "func",  action: onBackspaceClick },
     ],
     [
@@ -220,7 +220,7 @@ export default function Calc() {
       {
         face: "±",
         type: "digit",
-        action: _ => {
+        action: () => {
           if (awaitingSecond) return;
           if (display === "0") return;
           setDisplay(display.startsWith('-') ? display.substring(1) : "-" + display);

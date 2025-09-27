@@ -1,23 +1,14 @@
 import { Link, Outlet } from "react-router-dom";
 import './Layout.css'
-import { useContext, useRef } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import AppContext from "../../feauters/context/AppContext";
+import Base64 from "../../shared/base64/Base64";
 
 export default function Layout() {
-    const {user, setUser, count} = useContext(AppContext);
-    const closeModalRef = useRef();
-
-    const authenticate = () => {
-        setUser({
-            name: "The User",
-            email: "user@i.ua"
-        })
-        closeModalRef.current.click();
-    };
+    const {user, setToken, count} = useContext(AppContext);
 
     return <>
         <header>
-            
             <nav className="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
                 <div className="container-fluid">
                     <a className="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ASP_P26</a>
@@ -37,23 +28,19 @@ export default function Layout() {
                             </li>
                         </ul>
                             <h3 className="header-h3">Пидсумок:{count}</h3>
-
                         <div>
-                            
                             {!!user && <>
-                                 <button type="button" className="btn btn-outline-secondary" 
-                                 onClick={() => setUser(null)}>
-                                <i className="bi bi-box-arrow-right"></i>
-                            </button>
+                                <button type="button" className="btn btn-outline-secondary" 
+                                    onClick={() => setToken(null)}>
+                                    <i className="bi bi-box-arrow-right"></i>
+                                </button>
                             </>}
                             {!user && <>
-
                                 <a className="btn btn-outline-secondary" asp-controller="User" asp-action="SignUp"><i className="bi bi-person-circle"></i></a>
-                            <button type="button" className="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#authModal">
-                                <i className="bi bi-box-arrow-in-right"></i>
-                            </button>
+                                <button type="button" className="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#authModal">
+                                    <i className="bi bi-box-arrow-in-right"></i>
+                                </button>
                             </>}
-                            
                         </div>
                     </div>
                 </div>
@@ -67,8 +54,54 @@ export default function Layout() {
             </div>
         </footer>
 
+        <AuthModal/>
+    </>   
+}
 
-        <div className="modal fade" id="authModal" tabIndex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+function AuthModal() {
+    const { setToken } = useContext(AppContext);
+    const closeModalRef = useRef();
+    const [formState, setFormState] = useState({
+        "login": "",
+        "password": ""
+    });
+    const [isFormValid, setFormValid] = useState(false);
+
+    const authenticate = () => {
+        console.log(formState.login, formState.password);
+
+        const credentials = Base64.encode(`${formState.login}:${formState.password}`);
+
+        fetch("https://localhost:7229/user/login", {
+            method: "GET",
+            headers: {
+                'Authorization': 'Basic ' + credentials
+            }
+        }).then(r => r.json()).then(j => {
+            if(j.status == 200) {
+                const jwt = j.data;
+                setToken(jwt);
+            }
+            else {
+                console.error(j.data)
+            }
+        });
+
+        // setUser({
+        //     name: "The User",
+        //     email: "user@i.ua"
+        // })
+        // closeModalRef.current.click();
+    };
+
+
+    useEffect(() => {
+        console.log("useEffect", formState.login, formState.password);
+        setFormValid(formState.login.length > 2 && formState.password.length > 2);
+    }, [formState]);
+
+
+    return <div className="modal fade" id="authModal" tabIndex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
             <div className="modal-dialog">
                 <div className="modal-content">
                     <div className="modal-header">
@@ -76,26 +109,39 @@ export default function Layout() {
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div className="modal-body">
-                        <form id="sign-in-form">
                             <div className="input-group mb-3">
                                 <span className="input-group-text" id="user-login-addon"><i className="bi bi-key"></i></span>
-                                <input name="user-login" type="text" className="form-control" placeholder="Логін" aria-label="Логін" aria-describedby="user-login-addon"/>
+                                
+                                <input
+                                 onChange={e => {
+                                    // formState.login = e.target.value
+                                    // setFormState(formState) // ссылка не изменяется и состояние не обноавляется
+                                    // console.log("event", formState.login);
+
+                                    setFormState({...formState, login: e.target.value});
+                                }}
+                                 
+                                 value={formState.login}
+                                 name="user-login" type="text" className="form-control" placeholder="Логін" aria-label="Логін" aria-describedby="user-login-addon"/>
                                 <div className="invalid-feedback"></div>
                             </div>
                             <div className="input-group mb-3">
                                 <span className="input-group-text" id="user-password-addon"><i className="bi bi-lock"></i></span>
-                                <input name="user-password" type="password" className="form-control" placeholder="Пароль" aria-label="Пароль" aria-describedby="user-password-addon"/>
+                                <input
+                                 onChange={e => {
+                                    setFormState(state => { return{...state, password: e.target.value } });
+                                }}
+                                 value={formState.password} 
+                                 name="user-password" type="password" className="form-control" placeholder="Пароль" aria-label="Пароль" aria-describedby="user-password-addon"/>
                                 <div className="invalid-feedback"></div>
                             </div>
-                        </form>
                     </div>
                     <div className="modal-footer">
                         <button ref={closeModalRef} type="button" className="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
-                        <button onClick={authenticate} type="button" className="btn btn-primary" form="sign-in-form">Вхід</button>
+                        <button disabled={!isFormValid} onClick={authenticate} type="button" className="btn btn-primary">Вхід</button>
                     </div>
                 </div>
             </div>
         </div>
- 
-    </>   
 }
+

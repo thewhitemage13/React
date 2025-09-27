@@ -5,14 +5,23 @@ import Layout from './ui/laout';
 import Privacy from '../pages/privacy/Privacy';
 import About from '../pages/about/About';
 import AppContext from '../feauters/context/AppContext';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import Base64 from '../shared/base64/Base64';
 
 
 function App() {
   const[user, setUser] = useState(null);
   const [count, setCount] = useState(0);
+  const [token, setToken] = useState(null);
+
+  useEffect (() => {
+    const u = token == null ? null : Base64.jwtDecodePayload(token);
+    console.log(u);
+    setUser(u);
+  }, [token]);
+
   
-  return <AppContext.Provider value={{ message: "Hello From App", user, setUser, count, setCount }}>
+  return <AppContext.Provider value={{ message: "Hello From App", user, count, setCount, token, setToken }}>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Layout />}>

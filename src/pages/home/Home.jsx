@@ -25,7 +25,7 @@ export default function Home() {
 
                 <h3>Пидсумок: {count}</h3>
                 <hr />
-                {!!user && <p>Приветствуем {user.name}</p>}
+                {!!user && <p>Приветствуем {user.Name}</p>}
 
                 <hr />
                 <CountWidget count={count} setCount={setCount} /> {/* Prop Drilling */}
