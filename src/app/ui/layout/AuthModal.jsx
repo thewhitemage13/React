@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import AppContext from "../../../feauters/context/AppContext";
+import AppContext from "../../../features/context/AppContext";
 import Base64 from "../../../shared/base64/Base64";
 
 export default function AuthModal() {

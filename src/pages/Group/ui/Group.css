@@ -1,0 +1,77 @@
+[data-in-cart="0"] .in-cart {
+    display: none;
+}
+[data-in-cart="0"] .not-in-cart {
+    display: block;
+}
+ 
+[data-in-cart="1"] .in-cart {
+    display: block;
+}
+[data-in-cart="1"] .not-in-cart {
+    display: none;
+}
+
+.group-container {
+  display: flex;
+  justify-content: space-between; 
+  align-items: stretch;
+  flex-wrap: nowrap; 
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.group-item {
+  flex: 1;             
+  max-width: 200px;      
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  background: #fff;
+}
+
+.group-item:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.group-image {
+  width: 100%;       
+  max-width: 50px;  
+  height: 50px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+
+.group-name {
+  display: block;
+  font-weight: 600;
+  margin-top: 5px;
+}
+
+.group-item {
+  position: relative;
+  display: inline-block;
+  margin: 10px;
+}
+
+.tooltip-content {
+  display: none;
+  position: absolute;
+  top: 100%;        
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  font-size: 14px;
+  z-index: 100;
+  margin-top: 5px;
+}
+
+.group-item:hover .tooltip-content {
+  display: block;
+}

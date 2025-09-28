@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import AppContext from "../../feauters/context/AppContext";
+import AppContext from "../../features/context/AppContext";
 import Calc from "../../widgets/calc/Calc";
 
 export default function Intro() {

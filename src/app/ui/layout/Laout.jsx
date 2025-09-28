@@ -1,7 +1,7 @@
 import { Link, Outlet } from "react-router-dom";
 import './Layout.css'
 import { useContext } from "react";
-import AppContext from "../../../feauters/context/AppContext";
+import AppContext from "../../../features/context/AppContext";
 import Base64 from "../../../shared/base64/Base64";
 import AuthModal from "./AuthModal";
 
