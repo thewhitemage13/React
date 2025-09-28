@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 export default function Home() {
     const {user} = useContext(AppContext);
     const [pageData, setPageData] = useState({productGroups:[]});
+    const [topProducts, setTopProducts] = useState([]);
 
     useEffect(() => {
         fetch("https://localhost:7229/api/product-group")
@@ -20,6 +21,19 @@ export default function Home() {
             }
         })
     }, []);
+
+
+  useEffect(() => {
+    fetch("https://localhost:7229/api/product/top")
+      .then(r => r.json())
+      .then(j => {
+        if (j.meta) {
+          setTopProducts(j.data.topProducts);
+        } else {
+          console.error(j);
+        }
+      });
+  }, []);
 
     return <div>
         <div className="page-title">
@@ -40,5 +54,27 @@ export default function Home() {
             </div>
         </div>)}
         </div>
-    </div>;
+
+
+        <div>
+        <h2 className="mt-5">Топ продажів</h2>
+      </div>
+
+      <div className="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 mt-4">
+        {topProducts.map(prod => (
+          <div key={prod.id} className="col">
+            <div className="card h-100">
+              <Link to={"/product/" + prod.slug} className="nav-link">
+                <img src={prod.imageUrl} className="card-img-top" alt={prod.name} />
+              </Link>
+              <div className="card-body">
+                <h5 className="card-title">{prod.name}</h5>
+                <p className="card-text">{prod.description}</p>
+                <p className="card-text fw-bold">{prod.price} ₴</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
 }
