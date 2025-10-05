@@ -6,7 +6,7 @@ import Base64 from "../../../shared/base64/Base64";
 import AuthModal from "./AuthModal";
 
 export default function Layout() {
-    const {user, setToken, count} = useContext(AppContext);
+    const {cart, user, setToken, count} = useContext(AppContext);
 
     return <>
         <header>
@@ -32,7 +32,11 @@ export default function Layout() {
                             <h3 className="header-h3">Пидсумок:{count}</h3>
                         <div>
                             {!!user && <>
-                                <button type="button" className="btn btn-outline-secondary" 
+                                <Link to="/cart" className="btn btn-outline-success me-3">
+                                    <i className="bi bi-cart"></i>
+                                    <span>{cart.cartItems.length}</span>
+                                </Link>
+                                <button type="button" className="btn btn-outline-secondary m-2" 
                                     onClick={() => setToken(null)}>
                                     <i className="bi bi-box-arrow-right"></i>
                                 </button>

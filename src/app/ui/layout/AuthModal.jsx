@@ -3,170 +3,101 @@ import AppContext from "../../../features/context/AppContext";
 import Base64 from "../../../shared/base64/Base64";
 
 export default function AuthModal() {
-    const { setToken } = useContext(AppContext);
+    const {setToken, request} = useContext(AppContext);
     const closeModalRef = useRef();
-    const [formState, setFormState] = useState({ login: "", password: "" });
+    const modalRef = useRef();
+    const [formState, setFormState] = useState({
+        "login": "",
+        "password": ""
+    });
     const [isFormValid, setFormValid] = useState(false);
+    const [error, setError] = useState(false);
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [authError, setAuthError] = useState("");
 
-    const authenticate = async () => {
-    setAuthError("");
-    setIsLoading(true);
-
-    try {
+    const authenticate = () => {
+        console.log(formState.login, formState.password);
+        // RFC 7617 
         const credentials = Base64.encode(`${formState.login}:${formState.password}`);
+        request("/user/login", {
+            method: "GET",
+            headers: {
+                'Authorization': 'Basic ' + credentials
+            }
+        }).then(data => {
+            setToken(data);
+            setError(false);
+            closeModalRef.current.click();
+        })
+        .catch(_ => setError("Вхід скасовано"));
+    };
 
-        const r = await fetch("https://localhost:7229/user/login", {
-        method: "GET",
-        headers: {
-            "Authorization": "Basic " + credentials,
-            "Accept": "application/json, text/plain, */*"
-        }
+    const onModalClose = () => {
+        // console.log("Modal hide");
+        setFormState({
+            "login": "",
+            "password": ""
         });
-
-        const ctype = r.headers.get("content-type") || "";
-        const isJson = ctype.toLowerCase().includes("application/json");
-
-        let payload = null;
-        try {
-        payload = isJson ? await r.json() : await r.text();
-        } catch {
-        payload = null;
-        }
-
-        if (r.ok) {
-        if (isJson && payload?.status === 200 && payload?.data) {
-            setToken(payload.data);
-            setIsLoading(false);
-            setAuthError("");
-            closeModalRef.current?.click();
-            return;
-        }
-        if (!isJson && typeof payload === "string" && payload.trim().length > 0) {
-            setToken(payload.trim());
-            setIsLoading(false);
-            setAuthError("");
-            closeModalRef.current?.click();
-            return;
-        }
-        setAuthError("Неочікувана відповідь сервера.");
-        setIsLoading(false);
-        return;
-        }
-
-        let serverMsg = "";
-        if (isJson) {
-        serverMsg = payload?.message || payload?.error || payload?.data || "";
-        } else if (typeof payload === "string") {
-        serverMsg = payload;
-        }
-
-        if (r.status === 401) {
-        setAuthError(serverMsg || "Невірний логін або пароль.");
-        } else {
-        setAuthError(serverMsg || `Помилка автентифікації (HTTP ${r.status}).`);
-        }
-        setIsLoading(false);
-    } catch {
-        setAuthError("Помилка мережі. Перевірте з’єднання.");
-        setIsLoading(false);
-    }
-    };  
+        setError(false);
+    };
 
     useEffect(() => {
+        // console.log("useEffect", formState.login, formState.password);
         setFormValid(formState.login.length > 2 && formState.password.length > 2);
     }, [formState]);
 
-    const loginInvalid = !!authError && formState.login.trim().length === 0;
-    const passwordInvalid = !!authError && formState.password.trim().length === 0;
+    useEffect(() => {
+        modalRef.current.addEventListener('hide.bs.modal', onModalClose);
+        return () => {
+            if(modalRef.current) {
+                modalRef.current.removeEventListener('hide.bs.modal', onModalClose)
+            }
+        };
 
-    return (
-        <div className="modal fade" id="authModal" tabIndex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
-            <div className="modal-dialog">
-                <div className="modal-content auth-relative">
-                    <div className="modal-header">
-                        <h1 className="modal-title fs-5" id="authModalLabel">Вхід до сайту</h1>
-                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
+    }, []);
 
-                    <div className="modal-body">
+    return <div ref={modalRef} className="modal fade" id="authModal" tabIndex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+        <div className="modal-dialog">
+            <div className="modal-content">
+                <div className="modal-header">
+                    <h1 className="modal-title fs-5" id="authModalLabel">Вхід до сайту</h1>
+                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div className="modal-body">
+                    
                         <div className="input-group mb-3">
                             <span className="input-group-text" id="user-login-addon"><i className="bi bi-key"></i></span>
-                            <input
-                                onChange={e => setFormState({ ...formState, login: e.target.value })}
+                            <input 
+                                onChange={e => {
+                                    // formState.login = e.target.value;
+                                    // setFormState(formState);  // !! посилання не змінюється - стан не оновлюється
+                                    // console.log("event", formState.login);
+                                    setFormState({...formState, login: e.target.value});
+                                }}
                                 value={formState.login}
-                                name="user-login"
-                                type="text"
-                                className={`form-control ${loginInvalid ? 'is-invalid' : ''}`}
-                                placeholder="Логін"
-                                aria-label="Логін"
-                                aria-describedby="user-login-addon"
-                                disabled={isLoading}
-                            />
-                            <div className="invalid-feedback">Вкажіть логін</div>
+                                name="user-login" type="text" className="form-control"
+                                placeholder="Логін" aria-label="Логін" aria-describedby="user-login-addon"/>
+                            <div className="invalid-feedback"></div>
                         </div>
-
                         <div className="input-group mb-3">
                             <span className="input-group-text" id="user-password-addon"><i className="bi bi-lock"></i></span>
-                            <input
-                                onChange={e => setFormState(s => ({ ...s, password: e.target.value }))}
+                            <input 
+                                onChange={e => {
+                                    setFormState(state => { return {...state, password: e.target.value}; });
+                                }}
                                 value={formState.password}
-                                name="user-password"
-                                type="password"
-                                className={`form-control ${passwordInvalid ? 'is-invalid' : ''}`}
-                                placeholder="Пароль"
-                                aria-label="Пароль"
-                                aria-describedby="user-password-addon"
-                                disabled={isLoading}
-                            />
-                            <div className="invalid-feedback">Вкажіть пароль</div>
+                                name="user-password" type="password" className="form-control" placeholder="Пароль"
+                                aria-label="Пароль" aria-describedby="user-password-addon"/>
+                            <div className="invalid-feedback"></div>
                         </div>
-                    </div>
-
-                    <div className="modal-footer">
-                        <button
-                            ref={closeModalRef}
-                            type="button"
-                            className="btn btn-secondary"
-                            data-bs-dismiss="modal"
-                            disabled={isLoading}
-                        >
-                            Скасувати
-                        </button>
-
-                        <button
-                            disabled={!isFormValid || isLoading}
-                            onClick={authenticate}
-                            type="button"
-                            className="btn btn-primary"
-                        >
-                            {isLoading ? (
-                                <>
-                                    <span className="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
-                                    Вхід...
-                                </>
-                            ) : "Вхід"}
-                        </button>
-                    </div>
-
-                    <div className="auth-overlay" aria-live="polite">
-                        {isLoading && (
-                            <div className="auth-loader">
-                                <span className="spinner-border" role="status" aria-hidden="true"></span>
-                                <span>Виконується вхід…</span>
-                            </div>
-                        )}
-                        {!isLoading && !!authError && (
-                            <div className="auth-error">
-                                <i className="bi bi-exclamation-triangle-fill"></i>
-                                <span>{authError}</span>
-                            </div>
-                        )}
-                    </div>
+                        
+                </div>
+                <div className="modal-footer">
+                    {error && <div className="alert alert-danger flex-grow-1 py-2" role="alert">{error}</div>}
+                    <button ref={closeModalRef} onClick={onModalClose} type="button" className="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                    <button disabled={!isFormValid} onClick={authenticate} type="button" className="btn btn-primary" >Вхід</button>
                 </div>
             </div>
         </div>
-    );
+    </div>;
+
 }
