@@ -9,3 +9,37 @@
 .association .btn {
     padding: 1px 5px;
 }
+
+.toast-fixed {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    z-index: 1060;
+    min-width: 320px;
+    max-width: 92vw;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .2);
+    border-radius: 12px;
+    padding: 12px 14px;
+    color: #fff;
+}
+
+.toast-success {
+    background: #c7d4ce;
+}
+
+.toast-warning {
+    background: #fd7e14;
+}
+
+.toast-danger {
+    background: #dc3545;
+}
+
+.toast-body {
+    font-size: 0.95rem;
+}
+
+.toast-body .btn {
+    border-radius: 10px;
+}
