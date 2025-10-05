@@ -8,3 +8,41 @@
     background-color: #f9f9f9;
     padding: 5px 3px;
 }
+
+.modal-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  display: grid;
+  place-items: center;
+  z-index: 1070;
+  padding: 16px;
+}
+
+.modal-card {
+  background: #fff;
+  border-radius: 12px;
+  max-width: 520px;
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(0,0,0,.2);
+}
+
+.modal-card-body {
+  padding: 20px;
+}
+
+.toast-fixed {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 1060;
+  min-width: 320px;
+  max-width: 92vw;
+  box-shadow: 0 10px 30px rgba(0,0,0,.2);
+  border-radius: 12px;
+  padding: 12px 14px;
+  color: #fff;
+}
+.toast-danger { background: #dc3545; }
+.toast-body { font-size: 0.95rem; }
