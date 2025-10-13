@@ -5,7 +5,6 @@ export default function Alarm({ alarmData }) {
   const closeRef = useRef(null);
   const modalRef = useRef(null);
 
-  // базовые стили + мапа статусов (как раньше)
   const baseBtnClasses = ["btn-secondary", "btn-primary", "btn-success", "btn-info"];
   const defaultStatusStyles = {
     ok: "btn-success",
