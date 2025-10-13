@@ -182,9 +182,18 @@ function CartItem({ cartItem }) {
 
   const changeQuantity = (cnt) => {
     if (cnt + cartItem.quantity <= 0) {
-      alarm();
-    } else {
-      request(
+      alarm({
+        title: "Действие не обратимо",
+        message: `Подивердите удаление позиции '${cartItem.product.name}'`,
+        buttons: [
+          {status: "negative", title: "Отменить"},
+          {status: "positive", title: "Удалить"},
+          {status: "neutral", title: "Закрыть"},
+        ]
+      })
+      .then(status => {
+        if(status == "positive") {
+        request(
         "/api/cart/" + cartItem.productId + "?increment=" + cnt,
         {
           method: "PATCH",
@@ -192,6 +201,22 @@ function CartItem({ cartItem }) {
       )
         .then(updateCart)
         .catch(alert);
+        }
+      })
+      .catch(() => {
+        console.log("alarm cancelled");
+      });
+    } else {
+      if(status == "positive") {
+        request(
+        "/api/cart/" + cartItem.productId + "?increment=" + cnt,
+        {
+          method: "PATCH",
+        }
+      )
+        .then(updateCart)
+        .catch(alert);
+        }
     }
   };
 
