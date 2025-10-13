@@ -10,7 +10,7 @@ import Layout from './ui/layout/Laout';
 import Group from '../pages/Group/Group';
 import Cart from '../pages/cart/Cart';
 import Product from '../pages/product/Product';
-import Alarm from './ui/Alaem';
+import Alarm from './ui/Alarm';
 
 const tokenStorageKey = "react-p26-token";
 
