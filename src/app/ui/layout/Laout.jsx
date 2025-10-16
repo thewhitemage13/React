@@ -6,7 +6,7 @@ import Base64 from "../../../shared/base64/Base64";
 import AuthModal from "./AuthModal";
 
 export default function Layout() {
-    const {cart, user, setToken, count} = useContext(AppContext);
+    const {cart, user, setToken, toast, count} = useContext(AppContext);
 
     return <>
         <header>
@@ -27,7 +27,9 @@ export default function Layout() {
                             <li className="nav-item">
                                 <Link className="nav-link text-dark" to="/about">About</Link>
                             </li>
-                            
+                            <li>
+                                <i onClick={() => toast({message: Math.random()})} className="bi bi-fork-knife"></i>
+                            </li>
                         </ul>
                             <h3 className="header-h3">Пидсумок:{count}</h3>
                         <div>
